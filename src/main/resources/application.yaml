@@ -1,0 +1,9 @@
+#配置文件环境配置 ： 号后一定要加个空格
+server:
+  port: 8099
+  context-path: /smartqq
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true

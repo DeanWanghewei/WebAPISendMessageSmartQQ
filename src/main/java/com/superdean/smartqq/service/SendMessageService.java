@@ -4,6 +4,8 @@ import com.thankjava.wqq.consts.MsgType;
 import com.thankjava.wqq.entity.msg.SendMsg;
 import com.thankjava.wqq.entity.wqq.FriendInfo;
 import com.thankjava.wqq.entity.wqq.FriendsList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.Map;
  */
 @Service
 public class SendMessageService {
+    private static final Logger LOG = LoggerFactory.getLogger(SendMessageService.class);
     @Autowired
     QQClientService qqClientService;
 
@@ -32,8 +35,10 @@ public class SendMessageService {
             return false;
         }
 
-        SendMsg test = new SendMsg(uni, MsgType.message, data);
-        qqClientService.getSmartQQClient().sendMsg(test);
+        SendMsg mes = new SendMsg(uni, MsgType.message, data);
+        qqClientService.getSmartQQClient().sendMsg(mes);
+        LOG.info("send a mesage {} ,to {}", friendsInfo.get(uni).getNickName(), mes);
+
         return true;
 
 

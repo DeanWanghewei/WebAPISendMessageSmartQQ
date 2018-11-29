@@ -81,10 +81,10 @@ public class CreatSmartQQClientInit {
 
 
                     ImageIO.write((BufferedImage) actionListener.getData(), "png",
-                            new File(ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH));
+                            new File(QQLoginService.QR_FILE_PATH));
 
                     LOG.info("获取登录二维码完成,手机QQ扫描 {} 位置的二维码图片",
-                            ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH);
+                            QQLoginService.QR_FILE_PATH);
                 } catch (Exception e) {
                     LOG.error("将byte[]写为图片失败", e);
                 }

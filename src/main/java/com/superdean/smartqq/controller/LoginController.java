@@ -50,10 +50,11 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
-        LOG.info("判断二维码位置：{} ", ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH);
+
+        LOG.info("判断二维码位置：{} ", QQLoginService.QR_FILE_PATH);
 
         File file = new File(
-                ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH);
+                QQLoginService.QR_FILE_PATH);
 
         if (file.exists()) {
             file.delete();
@@ -73,7 +74,7 @@ public class LoginController {
         resp.addHeader("Cache-Control", "no-store");
 
         try (final PrintWriter writer = resp.getWriter()) {
-            final byte[] data = IOUtils.toByteArray(new FileInputStream(ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH));
+            final byte[] data = IOUtils.toByteArray(new FileInputStream(QQLoginService.QR_FILE_PATH));
             StringBuilder sb = new StringBuilder();
             sb.append("<html><body><img src=\"data:image/png;base64,").
                     append(Base64.getEncoder().encodeToString(data)).append("\"/></body></html>");

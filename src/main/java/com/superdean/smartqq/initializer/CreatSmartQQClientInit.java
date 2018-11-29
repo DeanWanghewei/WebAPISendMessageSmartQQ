@@ -1,6 +1,7 @@
 package com.superdean.smartqq.initializer;
 
 import com.superdean.smartqq.service.QQClientService;
+import com.superdean.smartqq.service.QQLoginService;
 import com.thankjava.toolkit3d.core.fastjson.FastJson;
 import com.thankjava.wqq.SmartQQClient;
 import com.thankjava.wqq.SmartQQClientBuilder;
@@ -10,7 +11,6 @@ import com.thankjava.wqq.extend.ActionListener;
 import com.thankjava.wqq.extend.CallBackListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,20 +24,22 @@ import java.io.File;
  */
 
 @Component
-public class CreatSmartQQClientInit implements InitializingBean {
+public class CreatSmartQQClientInit {
     private static final Logger LOG = LoggerFactory.getLogger(CreatSmartQQClientInit.class);
-    public static final String QR_LOCAL_FILE_PATH = "qrcode.png";
 
     @Autowired
     QQClientService clientService;
 
+    private SmartQQClientBuilder builder;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    private CallBackListener getQrListener;
+
+    public void getQr() {
+
         /**
          * step 1 > 利用指定使用SmartQQClientBuilder指南来构建SmartQQClient实例
          */
-        SmartQQClientBuilder builder = SmartQQClientBuilder.custom(
+        builder = SmartQQClientBuilder.custom(
                 // 注册一个通知事件的处理器，它将在SmartQQClient获得到相关信息时被调用执行
                 new MessageListener()
         );
@@ -65,7 +67,7 @@ public class CreatSmartQQClientInit implements InitializingBean {
          */
 
         // A: 声明一个获取到登录二维码的回调函数，将返回二维码的byte数组数据
-        CallBackListener getQrListener = new CallBackListener() {
+        getQrListener = new CallBackListener() {
 
             // login 接口在得到登录二维码时会调用CallBackListener
             // 并且二维码byte[] 数据会通过ListenerAction.data返回
@@ -76,17 +78,13 @@ public class CreatSmartQQClientInit implements InitializingBean {
                 try {
                     // 将返回的byte[]数据io处理成一张png图片
                     // 位于项目log/qrcode.png
-                    File file = new File(QR_LOCAL_FILE_PATH);
-                    if (file.exists()) {
-                        file.delete();
-                        LOG.info("已经删除旧的二维码");
-                    }
-
-                    ImageIO.write((BufferedImage) actionListener.getData(), "png", new File(QR_LOCAL_FILE_PATH));
-//                    LOG.info(PrintLocalImage.getQr(PrintLocalImage.getUrlFromQrFile(QR_LOCAL_FILE_PATH)));
 
 
-                    LOG.debug("获取登录二维码完成,手机QQ扫描 ./log/qrcode.png 位置的二维码图片");
+                    ImageIO.write((BufferedImage) actionListener.getData(), "png",
+                            new File(ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH));
+
+                    LOG.info("获取登录二维码完成,手机QQ扫描 {} 位置的二维码图片",
+                            ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH);
                 } catch (Exception e) {
                     LOG.error("将byte[]写为图片失败", e);
                 }
@@ -94,6 +92,9 @@ public class CreatSmartQQClientInit implements InitializingBean {
             }
         };
 
+    }
+
+    public void buildClient() {
         // B: 声明一个登录结果的函数回调，在登录成功或者失败或异常时进行回调触发
         CallBackListener loginListener = new CallBackListener() {
 
@@ -123,14 +124,5 @@ public class CreatSmartQQClientInit implements InitializingBean {
         // C: 进行登录,启动服务
         builder.createAndLogin(getQrListener, loginListener);
 
-
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        CreatSmartQQClientInit creatSmartQQClientInit = new CreatSmartQQClientInit();
-
-
-        creatSmartQQClientInit.afterPropertiesSet();
     }
 }

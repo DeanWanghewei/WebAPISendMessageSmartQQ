@@ -50,9 +50,11 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
+        LOG.info("判断二维码位置：{} ", ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH);
 
         File file = new File(
                 ClassLoader.getSystemResource("").getPath() + QQLoginService.QR_FILE_PATH);
+
         if (file.exists()) {
             file.delete();
             LOG.info("已经删除旧的二维码");
